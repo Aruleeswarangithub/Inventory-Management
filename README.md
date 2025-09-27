@@ -14,6 +14,25 @@ A comprehensive inventory management web application built with Flask, implement
 - **Professional UI**: Bootstrap-based responsive design
 - **Form Validation**: Comprehensive input validation and error handling
 
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/image1.png)
+
+### Products
+![Products](screenshots/image2.png)
+
+### Locations
+![Locations](screenshots/image3.png)
+
+### Movements
+![Movements](screenshots/image4.png)
+
+### Balance Report
+![Balance Report](screenshots/image5.png)
+
+![Balance Report](screenshots/image6.png)
+
 ## Database Schema
 
 ### Product Table
@@ -80,7 +99,6 @@ flask-inventory/
     ├── add_movement.html # Add new movement form
     └── balance.html      # Current inventory balance report
 ```
-![Uploading image.png…]()
 
 ## Sample Data
 
