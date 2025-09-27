@@ -80,6 +80,7 @@ flask-inventory/
     ├── add_movement.html # Add new movement form
     └── balance.html      # Current inventory balance report
 ```
+![Uploading image.png…]()
 
 ## Sample Data
 
