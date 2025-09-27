@@ -2,6 +2,8 @@
 
 A comprehensive inventory management web application built with Flask, implementing all requirements from the Flask hiring test.
 
+# Deployed Link: https://inventory-management-hlc5.onrender.com/
+
 ## Features
 
 - **Product Management**: Add, edit, and view products with unique IDs
