@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Locations - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-map-marker-alt me-2"></i>Locations</h1>
+            <a href="{{ url_for('add_location') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Add New Location
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if locations %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Location ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for location in locations %}
+                                <tr>
+                                    <td><code>{{ location.location_id }}</code></td>
+                                    <td><strong>{{ location.name }}</strong></td>
+                                    <td>{{ location.description or '-' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('edit_location', location_id=location.location_id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-map-marker-alt fa-5x text-muted mb-3"></i>
+                        <h4 class="text-muted">No locations found</h4>
+                        <p class="text-muted">Start by adding your first location.</p>
+                        <a href="{{ url_for('add_location') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add First Location
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

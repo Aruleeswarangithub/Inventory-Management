@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Add Movement - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('movements') }}">Movements</a></li>
+                <li class="breadcrumb-item active">Add New</li>
+            </ol>
+        </nav>
+        <h1><i class="fas fa-plus me-2"></i>Add New Movement</h1>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-1"></i>Movement Types:</h6>
+                    <ul class="mb-0 small">
+                        <li><strong>Incoming:</strong> Leave "From Location" empty to add new stock</li>
+                        <li><strong>Outgoing:</strong> Leave "To Location" empty to remove stock (sales)</li>
+                        <li><strong>Transfer:</strong> Specify both locations to move between them</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-1"></i>Stock Validation:</h6>
+                    <p class="mb-0 small">
+                        The system will prevent you from transferring more quantity than available at the source location.
+                        Current stock levels are checked automatically when moving or selling products.
+                    </p>
+                </div>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.product_id.label(class="form-label") }}
+                        {{ form.product_id(class="form-control", id="product_select") }}
+                        {% if form.product_id.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.product_id.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.from_location.label(class="form-label") }}
+                        {{ form.from_location(class="form-control", id="from_location_select") }}
+                        {% if form.from_location.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.from_location.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Leave empty for incoming stock</small>
+                        <div id="stock_availability" class="mt-2" style="display: none;">
+                            <div class="alert alert-info py-2 mb-0">
+                                <small><strong>Available Stock:</strong> <span id="available_qty">0</span></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.to_location.label(class="form-label") }}
+                        {{ form.to_location(class="form-control") }}
+                        {% if form.to_location.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.to_location.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Leave empty for outgoing stock</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.qty.label(class="form-label") }}
+                        {{ form.qty(class="form-control", id="qty_input") }}
+                        {% if form.qty.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.qty.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Record Movement
+                        </button>
+                        <a href="{{ url_for('movements') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('product_select');
+    const fromLocationSelect = document.getElementById('from_location_select');
+    const stockAvailability = document.getElementById('stock_availability');
+    const availableQtySpan = document.getElementById('available_qty');
+    const qtyInput = document.getElementById('qty_input');
+
+    function updateStockInfo() {
+        const productId = productSelect.value;
+        const fromLocation = fromLocationSelect.value;
+
+        if (productId && fromLocation) {
+            // In a real application, you would make an AJAX call to get current stock
+            // For now, we'll show the availability section
+            stockAvailability.style.display = 'block';
+            availableQtySpan.textContent = 'Checking...';
+
+            // Simulate stock check - in real app, make AJAX call to Flask route
+            setTimeout(() => {
+                availableQtySpan.textContent = 'Available (will be validated on submit)';
+            }, 500);
+        } else {
+            stockAvailability.style.display = 'none';
+        }
+    }
+
+    productSelect.addEventListener('change', updateStockInfo);
+    fromLocationSelect.addEventListener('change', updateStockInfo);
+
+    // Validate quantity on input
+    qtyInput.addEventListener('input', function() {
+        const qty = parseInt(this.value);
+        if (qty < 1) {
+            this.setCustomValidity('Quantity must be at least 1');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+});
+</script>
+{% endblock %}

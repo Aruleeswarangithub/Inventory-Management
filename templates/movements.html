@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Movements - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-exchange-alt me-2"></i>Product Movements</h1>
+            <a href="{{ url_for('add_movement') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Add New Movement
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if movements.items %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Product</th>
+                                    <th>From Location</th>
+                                    <th>To Location</th>
+                                    <th>Quantity</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movement in movements.items %}
+                                <tr>
+                                    <td><code>{{ movement.movement_id }}</code></td>
+                                    <td>{{ movement.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>
+                                        <strong>{{ movement.product.name }}</strong><br>
+                                        <small class="text-muted">{{ movement.product_id }}</small>
+                                    </td>
+                                    <td>
+                                        {% if movement.from_location %}
+                                            {{ movement.from_loc.name }}<br>
+                                            <small class="text-muted">{{ movement.from_location }}</small>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if movement.to_location %}
+                                            {{ movement.to_loc.name }}<br>
+                                            <small class="text-muted">{{ movement.to_location }}</small>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><span class="badge bg-primary">{{ movement.qty }}</span></td>
+                                    <td>
+                                        {% if not movement.from_location and movement.to_location %}
+                                            <span class="badge bg-success">Incoming</span>
+                                        {% elif movement.from_location and not movement.to_location %}
+                                            <span class="badge bg-danger">Outgoing</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Transfer</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if movements.pages > 1 %}
+                        <nav aria-label="Movement pagination">
+                            <ul class="pagination justify-content-center">
+                                {% if movements.has_prev %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('movements', page=movements.prev_num) }}">Previous</a>
+                                    </li>
+                                {% endif %}
+
+                                {% for page_num in movements.iter_pages() %}
+                                    {% if page_num %}
+                                        {% if page_num != movements.page %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('movements', page=page_num) }}">{{ page_num }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ page_num }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if movements.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('movements', page=movements.next_num) }}">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-exchange-alt fa-5x text-muted mb-3"></i>
+                        <h4 class="text-muted">No movements found</h4>
+                        <p class="text-muted">Start by recording your first product movement.</p>
+                        <a href="{{ url_for('add_movement') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add First Movement
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

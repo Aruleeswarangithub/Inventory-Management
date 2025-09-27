@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <i class="fas fa-box fa-3x mb-3"></i>
+                <h4>{{ total_products }}</h4>
+                <p class="card-text">Total Products</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
+                <h4>{{ total_locations }}</h4>
+                <p class="card-text">Total Locations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-info text-white">
+            <div class="card-body">
+                <i class="fas fa-exchange-alt fa-3x mb-3"></i>
+                <h4>{{ total_movements }}</h4>
+                <p class="card-text">Total Movements</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-warning text-dark">
+            <div class="card-body">
+                <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                <h4><a href="{{ url_for('balance_report') }}" class="text-dark text-decoration-none">View</a></h4>
+                <p class="card-text">Balance Report</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock me-2"></i>Recent Movements</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_movements %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Product</th>
+                                    <th>From Location</th>
+                                    <th>To Location</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movement in recent_movements %}
+                                <tr>
+                                    <td>{{ movement.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>
+                                        <strong>{{ movement.product.name }}</strong><br>
+                                        <small class="text-muted">{{ movement.product_id }}</small>
+                                    </td>
+                                    <td>
+                                        {% if movement.from_location %}
+                                            {{ movement.from_loc.name }}<br>
+                                            <small class="text-muted">{{ movement.from_location }}</small>
+                                        {% else %}
+                                            <span class="badge bg-success">New Stock</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if movement.to_location %}
+                                            {{ movement.to_loc.name }}<br>
+                                            <small class="text-muted">{{ movement.to_location }}</small>
+                                        {% else %}
+                                            <span class="badge bg-danger">Outgoing</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><span class="badge bg-primary">{{ movement.qty }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{{ url_for('movements') }}" class="btn btn-primary">
+                            <i class="fas fa-list me-1"></i>View All Movements
+                        </a>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No movements recorded yet.</p>
+                    <a href="{{ url_for('add_movement') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Add First Movement
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
